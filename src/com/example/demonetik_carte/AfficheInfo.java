@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-public class MainActivity extends Activity {
+public class AfficheInfo extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,6 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -52,6 +51,14 @@ public class MainActivity extends Activity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+			
+			EditText montant = (EditText) rootView.findViewById(R.id.Montant);
+			EditText nom_porteur = (EditText) rootView.findViewById(R.id.Nom_Porteur);
+			EditText num_porteur = (EditText) rootView.findViewById(R.id.Num_porteur);
+			montant.setText(getActivity().getIntent().getExtras().getString("montant") + "€");
+			//nom_porteur.setText(getActivity().getIntent().getExtras().getString("nom"));
+			//num_porteur.setText(getActivity().getIntent().getExtras().getString("num"));
+			
 			return rootView;
 		}
 	}

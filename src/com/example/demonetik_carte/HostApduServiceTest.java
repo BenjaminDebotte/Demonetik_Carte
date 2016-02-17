@@ -1,13 +1,11 @@
 package com.example.demonetik_carte;
 
+import android.content.Intent;
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
 import java.util.Arrays;
 
-/**
- * Created by Joan on 02/12/2015.
- */
 public class HostApduServiceTest extends HostApduService {
 	public static final String TAG = "HceTest";
 
@@ -17,11 +15,16 @@ public class HostApduServiceTest extends HostApduService {
     protected final static byte[] PIN = StringUtils.convertASCIIStringToByteArray("1234");
     protected final static byte[] SW_PIN_VERIFICATION_NOT_SUCCESSFUL = StringUtils.convertHexStringToByteArray("6300");
     
-    private short counter;
     private int debit_amount;
+    private String Nom_porteur;
+    private String Num_carte;
+
     
     public HostApduServiceTest() {
-        counter = 0;
+        debit_amount =0;
+        Nom_porteur = "Monsieur Test";
+        Num_carte = "4789 6874 5698 1223 6548";
+        
     }
 
     @Override
@@ -31,14 +34,14 @@ public class HostApduServiceTest extends HostApduService {
         switch(commandApdu[1]) {
             case (byte)0xA4:
                 Log.i(TAG, "this is a select apdu");
-                //ret = ConcatArrays(HCE, SW_OK);
-                ret = SW_OK;
+            	//ret = ConcatArrays(HCE, SW_OK);
+                ret = info_porteur();
                 break;
-            case (byte)0x10:
+            /*case (byte)0x10:
                 Log.i(TAG, "this is a get counter");
                 byte [] count_resp = convertShortToByteArray(++counter);
                 ret =  ConcatArrays(count_resp, SW_OK);
-                break;
+                break;*/
             case (byte)0x40:  //Debit
                 Log.i(TAG, "This is a Debit apdu");
             	ret = get_debit_amount(commandApdu);
@@ -55,7 +58,7 @@ public class HostApduServiceTest extends HostApduService {
         Log.i(TAG, "Response = "+StringUtils.convertByteArrayToHexString(ret));
         return ret;
     }
-
+    
     public byte[] verify(byte[] Apdu){
     	if(Apdu[4] != 4)
     		return SW_PIN_VERIFICATION_NOT_SUCCESSFUL;
@@ -68,16 +71,39 @@ public class HostApduServiceTest extends HostApduService {
     
     public byte[] get_debit_amount(byte[] Apdu){
     	debit_amount = Apdu[5];
-    	Log.i(TAG, "montant de :"+ debit_amount);
+    	
+        Log.i(TAG, "montant de :"+ debit_amount);
+        Intent intent = new Intent(getApplicationContext(), AfficheInfo.class);
+        
+        //Intent intent = new Intent(getApplicationContext(), AfficheInfo.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("montant", String.valueOf(debit_amount));
+        intent.putExtra("nom", Nom_porteur);
+        intent.putExtra("num", Num_carte);
+        startActivity(intent);
     	
     	return SW_OK;
+    }
+    
+    public byte[] info_porteur(){ 	
+    	byte[] info_porteur = null;
+    	byte[] porteur  = StringUtils.convertASCIIStringToByteArray(Nom_porteur);
+    	byte[] carte    = StringUtils.convertASCIIStringToByteArray(Num_carte);
+    	byte[] lenPorteur = {(byte) Nom_porteur.length()};
+    	byte[] lenCarte   = {(byte) Num_carte.length()};
+    	
+    	info_porteur = ConcatArrays(lenPorteur, porteur, lenCarte, carte , SW_OK);
+    	
+    	return info_porteur;
+    	
     }
     
     @Override
     public void onDeactivated(int reason) {
 
     }
-
+    
+    
     /**
      * Utility method to concatenate two byte arrays.
      *
