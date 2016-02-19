@@ -38,11 +38,11 @@ public class HostApduServiceTest extends HostApduService {
                 Log.i(TAG, "this is a select apdu");
                 ret = info_porteur();
                 break;
-            case (byte)0x40:  //Debit
+            case (byte)0x40:  //Debit Apdu B0 40 00 00 len montant
                 Log.i(TAG, "This is a Debit apdu");
             	ret = get_debit_amount(commandApdu);
             	break;
-            case (byte)0x20:   //PIN
+            case (byte)0x20:   //PIN Apdu B0 20 00 00 len pin
             	Log.i(TAG,"This is a verify PIN");
             	ret = verify(commandApdu);
             	break;
@@ -56,7 +56,7 @@ public class HostApduServiceTest extends HostApduService {
     }
     
     public byte[] verify(byte[] Apdu){
-    	if(Apdu[4] != 4)
+    	if(Apdu[4] != 4) //Verify pin length
     		return SW_PIN_VERIFICATION_NOT_SUCCESSFUL;
     	
     	if(Apdu[5] == PIN[0] && Apdu[6] == PIN[1] && Apdu[7] == PIN[2] && Apdu[8] == PIN[3])
@@ -67,12 +67,14 @@ public class HostApduServiceTest extends HostApduService {
     
     public byte[] get_debit_amount(byte[] Apdu){
     	
-    	if(Apdu[4] == 1)
+    	if(Apdu[4] == 1) // Amount on 1 Byte
     		debit_amount = (int)Apdu[5] & 0x000000FF;
-    	else
+    	else			// Amount on 2 Byte
     		debit_amount = ((((int)Apdu[5] & 0x000000FF) << 8) | ((int)Apdu[6] & 0x000000FF));
     	
     	Log.i(TAG, "montant de :"+ Integer.toHexString(debit_amount));
+    	
+    	// Launch new activity used to display card information on screen
         Intent intent = new Intent(getApplicationContext(), AfficheInfo.class);
         
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
