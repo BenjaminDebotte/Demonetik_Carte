@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +20,6 @@ public class AfficheInfo extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -53,11 +46,11 @@ public class AfficheInfo extends Activity {
 			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 			
 			EditText montant = (EditText) rootView.findViewById(R.id.Montant);
-			EditText nom_porteur = (EditText) rootView.findViewById(R.id.Nom_Porteur);
-			EditText num_porteur = (EditText) rootView.findViewById(R.id.Num_porteur);
+			EditText nom_porteur = (EditText) rootView.findViewById(R.id.String_nom_porteur);
+			EditText num_porteur = (EditText) rootView.findViewById(R.id.String_num_porteur);
 			montant.setText(getActivity().getIntent().getExtras().getString("montant") + "€");
-			//nom_porteur.setText(getActivity().getIntent().getExtras().getString("nom"));
-			//num_porteur.setText(getActivity().getIntent().getExtras().getString("num"));
+			nom_porteur.setText(getActivity().getIntent().getExtras().getString("nom"));
+			num_porteur.setText(getActivity().getIntent().getExtras().getString("num"));
 			
 			return rootView;
 		}

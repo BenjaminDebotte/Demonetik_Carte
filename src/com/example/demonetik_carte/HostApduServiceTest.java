@@ -22,8 +22,8 @@ public class HostApduServiceTest extends HostApduService {
     
     public HostApduServiceTest() {
         debit_amount =0;
-        Nom_porteur = "Monsieur Test";
-        Num_carte = "4789 6874 5698 1223 6548";
+        Nom_porteur = "Jean Ticipe ";
+        Num_carte = "7253 3256 7895 1245";
         
     }
 
@@ -31,17 +31,13 @@ public class HostApduServiceTest extends HostApduService {
     public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
         byte [] ret = null;
         Log.i(TAG, "Received APDU: " + StringUtils.convertByteArrayToHexString(commandApdu));
+        Log.i(TAG, "Received APDU_: " + commandApdu);
+        
         switch(commandApdu[1]) {
             case (byte)0xA4:
                 Log.i(TAG, "this is a select apdu");
-            	//ret = ConcatArrays(HCE, SW_OK);
                 ret = info_porteur();
                 break;
-            /*case (byte)0x10:
-                Log.i(TAG, "this is a get counter");
-                byte [] count_resp = convertShortToByteArray(++counter);
-                ret =  ConcatArrays(count_resp, SW_OK);
-                break;*/
             case (byte)0x40:  //Debit
                 Log.i(TAG, "This is a Debit apdu");
             	ret = get_debit_amount(commandApdu);
@@ -70,12 +66,15 @@ public class HostApduServiceTest extends HostApduService {
     }
     
     public byte[] get_debit_amount(byte[] Apdu){
-    	debit_amount = Apdu[5];
     	
-        Log.i(TAG, "montant de :"+ debit_amount);
+    	if(Apdu[4] == 1)
+    		debit_amount = (int)Apdu[5] & 0x000000FF;
+    	else
+    		debit_amount = ((((int)Apdu[5] & 0x000000FF) << 8) | ((int)Apdu[6] & 0x000000FF));
+    	
+    	Log.i(TAG, "montant de :"+ Integer.toHexString(debit_amount));
         Intent intent = new Intent(getApplicationContext(), AfficheInfo.class);
         
-        //Intent intent = new Intent(getApplicationContext(), AfficheInfo.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("montant", String.valueOf(debit_amount));
         intent.putExtra("nom", Nom_porteur);
@@ -89,10 +88,10 @@ public class HostApduServiceTest extends HostApduService {
     	byte[] info_porteur = null;
     	byte[] porteur  = StringUtils.convertASCIIStringToByteArray(Nom_porteur);
     	byte[] carte    = StringUtils.convertASCIIStringToByteArray(Num_carte);
-    	byte[] lenPorteur = {(byte) Nom_porteur.length()};
-    	byte[] lenCarte   = {(byte) Num_carte.length()};
     	
-    	info_porteur = ConcatArrays(lenPorteur, porteur, lenCarte, carte , SW_OK);
+    	info_porteur = ConcatArrays( porteur, carte);
+    	
+    	Log.i(TAG, StringUtils.convertByteArrayToASCIIString(info_porteur));
     	
     	return info_porteur;
     	
