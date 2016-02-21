@@ -4,5 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.demonetik_carte.MainActivity"
-    tools:ignore="MergeRootFrame" />
+    tools:ignore="MergeRootFrame" 
+    
+    android:background="#18609b">
+
+    <LinearLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/Attente"
+            android:textColor="#EEE6E6"
+            android:textSize="15dp" />
+    </LinearLayout>
+
+</FrameLayout>
 

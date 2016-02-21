@@ -6,5 +6,9 @@
     <string name="action_settings">Settings</string>
     <string name="Num_porteur">Numero porteur : </string>
     <string name="Montant">Montant Transaction :</string>
+    <string name="aiddescription">HceAppletTest</string>
+    <string name="title_activity_affiche_info">Demonetik_Carte</string>
+    <string name="Titre">Ensicaen Mobile Payment</string>
+    <string name="Attente">En attente de transaction</string>
 
 </resources>
